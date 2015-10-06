@@ -1,1 +1,1 @@
-# TM-Manager
+# TMOP - Translation Memory Open-source Purifier
