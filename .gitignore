@@ -1,0 +1,9 @@
+# Ignore everything in this directory
+*.pyc
+*.pyo
+test*
+note.txt
+# Except this file
+!.gitignore
+
+

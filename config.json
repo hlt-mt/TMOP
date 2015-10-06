@@ -1,0 +1,39 @@
+{
+	"options": {
+		"input file":				"en_it.csv",
+		"output folder":			"output",
+		"align file (no)":			"final.align",
+		"source language":			"English",
+		"target language":			"Italian"
+	},
+
+	"policies": [
+		["OneNo",					"off"],
+		["SingleFilterPolicy",		"on"]
+	],
+
+	"filters": [
+		["SampleFilter",					"on"],
+		["LengthRatio",						"off"],
+		["ReverseLengthRatio",				"off"],
+		["WordRatio",						"off"],
+		["ReverseWordRatio",				"off"],
+		["TagFinder",						"off"],
+		["RepeatedChars",					"off"],
+		["RepeatedWords",					"off"],
+		["WordLength",						"off"],
+		["Lang_Identifier",					"off"],
+		["LengthStats",						"off"],
+		["AlignedProportion",				"off"],
+		["BigramAlignedProportion",			"off"],
+		["NumberOfUnalignedSequences",		"off"],
+		["LongestAlignedSequence",			"off"],
+		["LongestUnalignedSequence",		"off"],
+		["AlignedSequenceLength",			"off"],
+		["UnalignedSequenceLength",			"off"],
+		["FirstUnalignedWord",				"off"],
+		["LastUnalignedWord",				"off"],
+		["InvertedCentroidVector",			"off"]
+	]
+}
+
