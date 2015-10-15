@@ -2,5 +2,5 @@
 *
 # Except this file
 !.gitignore
-!decision_log__sample_en_it.csv (expected)
+!(expected) decision_log__sample_en_it.csv
 
