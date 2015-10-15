@@ -9,7 +9,8 @@
 
 	"policies": [
 		["OneNo",					"off"],
-		["SingleFilterPolicy",		"on"]
+		["SingleFilterPolicy",		"on"],
+		["MajorityVoting",		"off"]
 	],
 
 	"filters": [
