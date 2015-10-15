@@ -1,8 +1,8 @@
 {
 	"options": {
-		"input file":				"en_it.csv",
+		"input file":				"sample_en_it.csv",
 		"output folder":			"output",
-		"align file (no)":			"final.align",
+		"align file":				"sample_align",
 		"source language":			"English",
 		"target language":			"Italian"
 	},
@@ -10,7 +10,7 @@
 	"policies": [
 		["OneNo",					"off"],
 		["SingleFilterPolicy",		"on"],
-		["MajorityVoting",		"off"]
+		["MajorityVoting",			"off"]
 	],
 
 	"filters": [
