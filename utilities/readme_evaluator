@@ -10,7 +10,7 @@ Output variable: output_file_name
 ---------------------------------------------------
 The gold data is like the input data of the TMOP (comma separated) and it has an additional column with the label of the TU.
 An annotated TU in the gold data hast this form:
-ID	source phrase	target phrase	label(0 or 1)
+ID	source phrase	target phrase	label(0 for 'reject' or 1 for 'accept')
 
 In the input of TMOP, the gold data should be at the start of the input TM.
 After running the TMOP, a decision log will be generated and it will be used as the input of "evaluator.py".
