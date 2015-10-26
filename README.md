@@ -13,3 +13,13 @@ iii) awkward according to some formatting criteria.
 
 TMop has been developed at Fondazione Bruno Kessler with the support of the European Association of Machine Translation (EAMT). It can be downloaded as a package including: software, documentation, toy data and evaluation scripts. 
 
+
+# Contacts
+
+This software has been developed by:
+
+Matteo Negri, Fondazione Bruno Kessler, Italy (negri@fbk.eu)
+
+Masoud Jalili Sabet, University of Teheran, Iran (jalili.masoud@gmail.com>)
+
+Marco Turchi, Fondazione Bruno Kesler, Italy (turchi@fbk.eu)
