@@ -7,7 +7,7 @@ Input variable 2: tm_results_file_name
 Output variable: output_file_name
 	A result file with evaluation measures like Accuracy, Precision, Recall, etc
 
----------------------------------------------------
+--- Inputs ----------------------------------------
 The gold data is like the input data of the TMOP (comma separated) and it has an additional column with the label of the TU.
 An annotated TU in the gold data hast this form:
 ID	source phrase	target phrase	label(0 for 'reject' or 1 for 'accept')
@@ -15,4 +15,21 @@ ID	source phrase	target phrase	label(0 for 'reject' or 1 for 'accept')
 In the input of TMOP, the gold data should be at the start of the input TM.
 After running the TMOP, a decision log will be generated and it will be used as the input of "evaluator.py".
 
----------------------------------------------------
+--- Outputs ---------------------------------------
+At the beginning of the output file, there are four numbers showing the number of TUs in each state.
+True Positive: 0
+True Negative: 0
+False Positive: 0
+False Negative: 0
+
+In the next lines, the evaluation metrics for the 'accept' and 'reject' decisions are written.
+Accuracy :		0.0
+Balanced Acc :	0.0
+Precision :		0.0
+Recall :		0.0
+F1 Measure :	0.0
+
+There are some decisions with 'neutral' answer in the decision log.
+The results for all the TUs, considering 'neutral' answers as accepted and rejected are written in the next lines.
+
+
