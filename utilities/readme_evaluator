@@ -5,7 +5,7 @@ Input variable 1: gold_file_name
 Input variable 2: tm_results_file_name
 	Decision log from the output of the TMOP
 Output variable: output_file_name
-	A result file with evaluation measures like Accuracy, Precision, Recall, etc
+	A result file with evaluation measures (i.e. Accuracy, Balanced Accuracy, Precision, Recall and F1)
 
 --- Inputs ----------------------------------------
 The gold data is like the input data of the TMOP (comma separated) and it has an additional column with the label of the TU.
