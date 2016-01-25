@@ -11,7 +11,7 @@ ii) semantically different from the other,
 
 iii) awkward according to some formatting criteria. 
 
-TMop has been developed at [Fondazione Bruno Kessler](https://hlt-mt.fbk.eu) with the support of the European Association of Machine Translation (EAMT). It can be downloaded as a package including: software, documentation, toy data and evaluation scripts. 
+TMop has been developed at [Fondazione Bruno Kessler](https://hlt-mt.fbk.eu) with the support of the European Association of Machine Translation (EAMT) and the European Project [Modern Machine Translation (MMT)](http://www.modernmt.eu). It can be downloaded as a package including: software, documentation, toy data and evaluation scripts. 
 
 
 # Contacts
