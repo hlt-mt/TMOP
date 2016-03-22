@@ -67,6 +67,8 @@ class TMManager:
 		self.filters_config = None
 		self.policies_config = None
 		self.have_alignment = False
+		self.have_token = False
+		self.create_out_files = True
 
 	#
 	def load_options_from_config_file(self):
@@ -109,6 +111,11 @@ class TMManager:
 			self.options['output folder'] = "output"
 		if 'align file' in self.options:
 			self.have_alignment = True
+		if 'token file' in self.options:
+			self.have_token = True
+		if 'no out files' in self.options:
+			if self.options['no out files'] == 1:
+				self.create_out_files = False
 
 		# making the output folder
 		path = os.getcwd() + "/" + self.options['output folder']
@@ -257,6 +264,7 @@ class TMManager:
 
 	#
 	def policy_check_for_tu(self, tu_string, results):
+		self.output_files['log'].write(tu_string.split('\t')[0] + '\t')
 		for policy_tuple in self.policies:
 			try:
 				answer = policy_tuple[1].decide(results)
@@ -267,14 +275,15 @@ class TMManager:
 				answer = 'no_answer'
 
 			# ----- Writing the results in separate files -----
-			if (answer + "_" + policy_tuple[0]) not in self.output_files:
-				path = os.getcwd() + "/" + self.options['output folder'] + "/"
-				out_file_name = path + answer + "_" + policy_tuple[0] + "__" + self.options['input file']
+			if self.create_out_files:
+				if (answer + "_" + policy_tuple[0]) not in self.output_files:
+					path = os.getcwd() + "/" + self.options['output folder'] + "/"
+					out_file_name = path + answer + "_" + policy_tuple[0] + "__" + self.options['input file']
 
-				out_file = open(out_file_name, 'w')
-				self.output_files[(answer + "_" + policy_tuple[0])] = out_file
+					out_file = open(out_file_name, 'w')
+					self.output_files[(answer + "_" + policy_tuple[0])] = out_file
 
-			self.output_files[(answer + "_" + policy_tuple[0])].write(tu_string + "\n")
+				self.output_files[(answer + "_" + policy_tuple[0])].write(tu_string + "\n")
 
 			if answer == 'reject':
 				self.output_files['log'].write('0\treject\t')
@@ -282,6 +291,10 @@ class TMManager:
 				self.output_files['log'].write('2\taccept\t')
 			else:
 				self.output_files['log'].write('1\t' + answer + '\t')
+
+		for r in results:
+			self.output_files['log'].write('\t#|#\t' + r[0] + '\t' + r[1])
+
 		self.output_files['log'].write('\n')
 
 	#
@@ -301,9 +314,6 @@ class TMManager:
 		"""
 		print "Running the TM cleaner ..."
 		from abstract_filter import TU
-
-		# For tokenizing the TUs and put the output in TU objects
-		tokenizer = re.compile(r"\(|\)|\w+|\$[\d\.]+|\S+")
 
 		if self.load_options_from_config_file() > 0:
 			print "Exiting before finishing."
@@ -353,27 +363,41 @@ class TMManager:
 
 		# Extending the input URL
 		input_file_path = os.getcwd() + '/data/' + self.options['input file']
+
+		if not os.path.isfile(input_file_path):
+			print "Input file not found!\nGiven file in config file:", input_file_path
+			print "Exiting the code."
+			return
+
 		if self.have_alignment:
 			align_file_path = os.getcwd() + '/data/' + self.options['align file']
+
+			if not os.path.isfile(align_file_path):
+				print "Alignment file not found!\nGiven file in config file:", align_file_path
+				print "Exiting the code."
+				return
+
+		# For tokenizing the TUs and put the output in TU objects
+		if self.have_token:
+			token_file_path = os.getcwd() + '/data/' + self.options['token file']
+
+			if not os.path.isfile(token_file_path):
+				print "Token file not found!\nGiven file in config file:", token_file_path
+				print "Exiting the code."
+				return
+		else:
+			tokenizer = re.compile(r"\(|\)|\w+|\$[\d\.]+|\S+")
 
 		for scan_number in range(max_scan):
 			print "Scan iteration ", scan_number + 1, ":"
 			active_filters = [(x[0], x[1], x[2]-(max_scan-scan_number)) for x in self.filters if x[2] >= max_scan-scan_number]
 
-			if not os.path.isfile(input_file_path):
-				print "Input file not found!\nGiven file in config file:", input_file_path
-				print "Exiting the code."
-				return
-
-			if self.have_alignment is True and not os.path.isfile(align_file_path):
-				print "Alignment file not found!\nGiven file in config file:", align_file_path
-				print "Exiting the code."
-				return
-
 			# The input file is in CSV Tab separated format.
 			tm_file = open(input_file_path, 'rb')
 			if self.have_alignment is True:
 				tm_align_file = open(align_file_path, 'r')
+			if self.have_token is True:
+				tm_token_file = open(token_file_path, 'rb')
 
 			line_no = 0
 			for line in tm_file:
@@ -404,8 +428,15 @@ class TMManager:
 					else:
 						tu.trg_phrase = line[2]
 
-					tu.src_tokens = tokenizer.findall(tu.src_phrase.lower())
-					tu.trg_tokens = tokenizer.findall(tu.trg_phrase.lower())
+					if self.have_token is True:
+						token_line = tm_token_file.readline()
+						token_line = token_line[:-1].lower().split("\t")
+
+						tu.src_tokens = token_line[0].split()
+						tu.trg_tokens = token_line[1].split()
+					else:
+						tu.src_tokens = tokenizer.findall(tu.src_phrase.lower())
+						tu.trg_tokens = tokenizer.findall(tu.trg_phrase.lower())
 
 					if self.have_alignment is True:
 						tu.alignment = [(int(x[0]), int(x[1])) for x in alignment]
@@ -430,9 +461,12 @@ class TMManager:
 						print "The Exception:"
 						print repr(e)
 
+			# closing data files
 			tm_file.close()
 			if self.have_alignment is True:
 				tm_align_file.close()
+			if self.have_token is True:
+				tm_token_file.close()
 
 			# Finishing the scan for all active filters.
 			for filter_tuple in active_filters:
@@ -482,11 +516,18 @@ class TMManager:
 		tm_file = open(input_file_path, 'rb')
 		if self.have_alignment is True:
 			tm_align_file = open(align_file_path, 'r')
+		if self.have_token is True:
+			tm_token_file = open(token_file_path, 'rb')
 
 		line_no = 0
 		for line in tm_file:
 			line_no += 1
 			line = line.split("\t")
+
+			# Exiting the decision section for the rest of the TM
+			if 'max decision' in self.options:
+				if self.options['max decision'] < line_no:
+					break
 
 			if self.have_alignment is True:
 				alignment = tm_align_file.readline()
@@ -518,8 +559,15 @@ class TMManager:
 				else:
 					tu.trg_phrase = line[2]
 
-				tu.src_tokens = tokenizer.findall(tu.src_phrase.lower())
-				tu.trg_tokens = tokenizer.findall(tu.trg_phrase.lower())
+				if self.have_token is True:
+					token_line = tm_token_file.readline()
+					token_line = token_line[:-1].lower().split("\t")
+
+					tu.src_tokens = token_line[0].split()
+					tu.trg_tokens = token_line[1].split()
+				else:
+					tu.src_tokens = tokenizer.findall(tu.src_phrase.lower())
+					tu.trg_tokens = tokenizer.findall(tu.trg_phrase.lower())
 
 				if self.have_alignment is True:
 					tu.alignment = [(int(x[0]), int(x[1])) for x in alignment]
@@ -547,9 +595,12 @@ class TMManager:
 			# if final_answer:
 			# 	output_file.write("\t".join(line))
 
+		# closing data files
 		tm_file.close()
 		if self.have_alignment is True:
 			tm_align_file.close()
+		if self.have_token is True:
+			tm_token_file.close()
 		self.close_output_files()
 
 		print "Cleaning is finished."

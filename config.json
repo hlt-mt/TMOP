@@ -1,10 +1,17 @@
 {
 	"options": {
-		"input file":				"sample_en_it.csv",
+		"input file1":				"sample_en_it.csv",
+		"input file":				"50k_bgold",
+
+		"align file1":				"sample_align",
+		"token file1":				"sample_token",
+		"token file":				"50k_bgold.tok",
+
 		"output folder":			"output",
-		"align file":				"sample_align",
 		"source language":			"English",
-		"target language":			"Italian"
+		"target language":			"Italian",
+		"no out files":			1,
+		"max decision1":			0
 	},
 
 	"policies": [
@@ -14,17 +21,20 @@
 	],
 
 	"filters": [
-		["SampleFilter",					"on"],
-		["LengthRatio",						"off"],
-		["ReverseLengthRatio",				"off"],
-		["WordRatio",						"off"],
-		["ReverseWordRatio",				"off"],
+		["SampleFilter",					"off"],
+		["LengthStats",						"off"],
+
+		["LengthRatio",						"on"],
+		["ReverseLengthRatio",				"on"],
+		["WordRatio",						"on"],
+		["ReverseWordRatio",				"on"],
+		["WordLength",						"on"],
+
 		["TagFinder",						"off"],
 		["RepeatedChars",					"off"],
 		["RepeatedWords",					"off"],
-		["WordLength",						"off"],
-		["Lang_Identifier",					"off"],
-		["LengthStats",						"off"],
+		["Lang_Identifier",					"on"],
+
 		["AlignedProportion",				"off"],
 		["BigramAlignedProportion",			"off"],
 		["NumberOfUnalignedSequences",		"off"],
@@ -34,6 +44,7 @@
 		["UnalignedSequenceLength",			"off"],
 		["FirstUnalignedWord",				"off"],
 		["LastUnalignedWord",				"off"],
+
 		["InvertedCentroidVector",			"off"]
 	]
 }
