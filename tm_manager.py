@@ -4,8 +4,10 @@ import sys
 import json
 import codecs
 import inspect
+import threading
 from copy import copy
 # from filters.abstract_filter import TU
+
 """
 TMoP - Translation Memory Open-Source Purifier by Matteo Negri, Masoud Jalili Sabet and Marco Turchi, October 2015
 
@@ -453,13 +455,19 @@ class TMManager:
 					continue
 
 				# Giving the tu to all active filters in this scan.
+				# threads = []
 				for filter_tuple in active_filters:
 					try:
+						# t = threading.Thread(target=filter_tuple[1].process_tu, args=(copy(tu), filter_tuple[2]))
+						# t.start()
+						# threads.append(t)
 						filter_tuple[1].process_tu(copy(tu), filter_tuple[2])
 					except Exception, e:
 						print "The filter", filter_tuple[0], "has problems processing the TU in line:", line_no
 						print "The Exception:"
 						print repr(e)
+				# for t in threads:
+					# t.join()
 
 			# closing data files
 			tm_file.close()
