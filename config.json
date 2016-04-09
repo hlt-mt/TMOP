@@ -1,39 +1,37 @@
 {
 	"options": {
-		"input file1":				"sample_en_it.csv",
-		"input file":				"50k_bgold",
+		"input file":				"sample_en_it.csv",
 
-		"align file1":				"sample_align",
-		"token file1":				"sample_token",
-		"token file":				"50k_bgold.tok",
+		"align file":				"sample_align",
+		"token file":				"sample_token",
 
 		"output folder":			"output",
 		"source language":			"English",
 		"target language":			"Italian",
-		"no out files":			1,
-		"max decision1":			0
+
+		"no out files":				1
 	},
 
 	"policies": [
 		["OneNo",					"off"],
-		["SingleFilterPolicy",		"on"],
+		["SingleFilterPolicy",		"off"],
 		["MajorityVoting",			"off"]
 	],
 
 	"filters": [
-		["SampleFilter",					"off"],
+		["SampleFilter",					"on"],
 		["LengthStats",						"off"],
 
-		["LengthRatio",						"on"],
-		["ReverseLengthRatio",				"on"],
-		["WordRatio",						"on"],
-		["ReverseWordRatio",				"on"],
-		["WordLength",						"on"],
-
+		["LengthRatio",						"off"],
+		["ReverseLengthRatio",				"off"],
+		["WordRatio",						"off"],
+		["ReverseWordRatio",				"off"],
+		["WordLength",						"off"],
 		["TagFinder",						"off"],
 		["RepeatedChars",					"off"],
 		["RepeatedWords",					"off"],
-		["Lang_Identifier",					"on"],
+
+		["Lang_Identifier",					"off"],
 
 		["AlignedProportion",				"off"],
 		["BigramAlignedProportion",			"off"],
@@ -45,7 +43,11 @@
 		["FirstUnalignedWord",				"off"],
 		["LastUnalignedWord",				"off"],
 
-		["InvertedCentroidVector",			"off"]
+		["WE_Average",						"off"],
+		["WE_Median",						"off"],
+		["WE_BestAlignScore",				"off"],
+		["WE_ScoreOtherAlignment",			"off"],
+		["WE_ScoreAlign_BestForRest",		"off"]
 	]
 }
 
