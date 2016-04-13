@@ -14,8 +14,9 @@
 
 	"policies": [
 		["OneNo",					"off"],
-		["SingleFilterPolicy",		"off"],
-		["MajorityVoting",			"off"]
+		["TwentyNo",				"off"],
+		["MajorityVoting",			"off"],
+		["SingleFilterPolicy",		"off"]
 	],
 
 	"filters": [
