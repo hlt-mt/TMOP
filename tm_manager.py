@@ -116,8 +116,14 @@ class TMManager:
 		if 'token file' in self.options:
 			self.have_token = True
 		if 'no out files' in self.options:
-			if self.options['no out files'] == 1:
+			if self.options['no out files'] == 'true':
 				self.create_out_files = False
+		if 'normalize scores' in self.options:
+			if self.options['normalize scores'] == 'true':
+				self.normalize_scores = True
+		if 'emit scores' in self.options:
+			if self.options['emit scores'] == 'true':
+				self.have_scores = True
 
 		# making the output folder
 		path = os.getcwd() + "/" + self.options['output folder']
@@ -330,9 +336,17 @@ class TMManager:
 
 		print "Initializing the filters..."
 
+		filters_arguments = {}
+		filters_arguments["source language"] = self.options['source language']
+		filters_arguments["target language"] = self.options['target language']
+		filters_arguments["normalize scores"] = self.normalize_scores
+		filters_arguments["input filename"] = self.options['input file']
+
 		for i in range(len(self.filters)):
 			try:
-				self.filters[i][1].initialize(self.options['source language'], self.options['target language'])
+				# intializing the filters
+				self.filters[i][1].initialize(self.options['source language'], self.options['target language'], copy(filters_arguments))
+				# updating the number of scans
 				self.filters[i] = (self.filters[i][0], self.filters[i][1], self.filters[i][1].num_of_scans)
 			except Exception, e:
 				print "Couldn't initialize the filter", self.filters[i][0]
@@ -389,6 +403,12 @@ class TMManager:
 				return
 		else:
 			tokenizer = re.compile(r"\(|\)|\w+|\$[\d\.]+|\S+")
+
+		if self.have_scores:
+			out_path = os.getcwd() + "/" + self.options['output folder'] + "/"
+			score_file_name = out_path + "scores__" + self.options['input file']
+			score_file = open(score_file_name, "w")
+			score_file.close()
 
 		for scan_number in range(max_scan):
 			print "Scan iteration ", scan_number + 1, ":"
@@ -454,20 +474,26 @@ class TMManager:
 					# print "The translation unit in line", line_no, "is corrupted. Skipped"
 					continue
 
-				# Giving the tu to all active filters in this scan.
-				# threads = []
+				scores = []
 				for filter_tuple in active_filters:
 					try:
-						# t = threading.Thread(target=filter_tuple[1].process_tu, args=(copy(tu), filter_tuple[2]))
-						# t.start()
-						# threads.append(t)
-						filter_tuple[1].process_tu(copy(tu), filter_tuple[2])
+						score = filter_tuple[1].process_tu(copy(tu), filter_tuple[2])
+						scores.append(score)
 					except Exception, e:
 						print "The filter", filter_tuple[0], "has problems processing the TU in line:", line_no
 						print "The Exception:"
 						print repr(e)
-				# for t in threads:
-					# t.join()
+
+				# writing filters' scores in the scores file
+				if self.have_scores and (max_scan - scan_number <= 1):
+					out_path = os.getcwd() + "/" + self.options['output folder'] + "/"
+					score_file_name = out_path + "scores__" + self.options['input file']
+					score_file = open(score_file_name, "a")
+
+					scores = str(scores).replace("[", "").replace("]", "").replace(" ", "")
+					score_file.write(scores + "\n")
+
+					score_file.close()
 
 			# closing data files
 			tm_file.close()

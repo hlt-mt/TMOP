@@ -17,10 +17,11 @@ class LengthStats(AbstractFilter):
 		self.src_mean = 0.0
 		self.trg_mean = 0.0
 
-	def initialize(self, source_language, target_language):
+	def initialize(self, source_language, target_language, extra_args):
 		self.num_of_scans = 1
-		self.src_language = source_language
-		self.trg_language = target_language
+		self.src_language = extra_args['source language']
+		self.trg_language = extra_args['target language']
+		self.normalize = extra_args['normalize scores']
 		return
 
 	def finalize(self):

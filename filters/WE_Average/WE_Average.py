@@ -13,7 +13,7 @@ import math
 
 class WE_Average(AbstractFilter):
 	def __init__(self):
-		self.var_mult = 1.0
+		self.var_mult = 2.0
 
 		self.src_language = ""
 		self.trg_language = ""
@@ -27,8 +27,8 @@ class WE_Average(AbstractFilter):
 		self.vectors = None
 		self.number_of_tus = 0
 
-		self.model_file_name = "models/vectors_bg_model_50k"
-		self.dict_file_name = "models/dict_50k"
+		self.model_file_name = "models/vectors_bg_model_1m"
+		self.dict_file_name = "models/dict_1m"
 
 		self.n = 0.0
 		self.sum = 0.0
@@ -37,10 +37,15 @@ class WE_Average(AbstractFilter):
 		self.mean = 0.0
 		self.var = 0.0
 
-	def initialize(self, source_language, target_language):
+	#
+	def initialize(self, source_language, target_language, extra_args):
 		self.num_of_scans = 3
-		self.src_language = source_language
-		self.trg_language = target_language
+		self.src_language = extra_args['source language']
+		self.trg_language = extra_args['target language']
+		self.normalize = extra_args['normalize scores']
+		self.stat_filename = "models/" + extra_args['input filename'] + "__WE_Average.stats"
+		if self.normalize:
+			self.stat_filename += "_n"
 
 		if os.path.isfile(self.model_file_name):
 			print "Loading from file ..."
@@ -58,7 +63,23 @@ class WE_Average(AbstractFilter):
 				self.all_words[l[0]] = int(l[1])
 			f.close()
 
+		if os.path.isfile(self.stat_filename):
+			self.num_of_scans = 0
+
+			f = open(self.stat_filename, 'r')
+			l = f.readline().strip().split("\t")
+			self.mean = float(l[1])
+			self.var = float(l[2])
+
+			f.close()
+			print "Loaded stats from the model file."
+
+		return
+
 	def finalize(self):
+		if self.num_of_scans == 0:
+			return
+
 		if self.num_of_scans == 1:
 			print "Loaded the model from file."
 		else:
@@ -80,6 +101,10 @@ class WE_Average(AbstractFilter):
 		self.mean = self.sum / self.n
 		self.var = (self.sum_sq - (self.sum * self.sum) / self.n) / (self.n - 1)
 		self.var = math.sqrt(self.var)
+
+		f = open(self.stat_filename, 'w')
+		f.write("stats\t" + str(self.mean) + "\t" + str(self.var) + "\n")
+		f.close()
 
 	def process_tu(self, tu, num_of_finished_scans):
 		if (num_of_finished_scans == 0 and self.num_of_scans == 1) or num_of_finished_scans == 2:
@@ -124,7 +149,7 @@ class WE_Average(AbstractFilter):
 			self.number_of_tus += 1
 
 	def do_after_a_full_scan(self, num_of_finished_scans):
-		if num_of_finished_scans == 1 and self.num_of_scans == 3:
+		if num_of_finished_scans == 1 and self.num_of_scans == 2:
 			self.vocab = Counter(self.all_words)
 
 			self.all_words = {}

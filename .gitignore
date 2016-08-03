@@ -3,6 +3,7 @@
 *.pyo
 test*
 note.txt
+quartiles
 # Except this file
 !.gitignore
 

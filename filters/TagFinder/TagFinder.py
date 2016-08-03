@@ -19,10 +19,11 @@ class TagFinder(AbstractFilter):
 		self.category_re = None
 		return
 
-	def initialize(self, source_language, target_language):
-		self.num_of_scans = 0
-		self.src_language = source_language
-		self.trg_language = target_language
+#
+	def initialize(self, source_language, target_language, extra_args):
+		self.num_of_scans = 1
+		self.src_language = extra_args['source language']
+		self.trg_language = extra_args['target language']
 
 		# ------------------------------------------------------------------------
 		date_regex = r"(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]|(?:Jan|Mar|May|Jul|Aug|Oct|Dec)))\1|" \
@@ -60,7 +61,75 @@ class TagFinder(AbstractFilter):
 		pass
 
 	def process_tu(self, tu, num_of_finished_scans):
-		pass
+		minus_points = 0
+
+		# - Dates ----------------------------------------------------------------
+		src_dates = len(self.date_re.findall(tu.src_phrase))
+		trg_dates = len(self.date_re.findall(tu.trg_phrase))
+		if src_dates != trg_dates:
+			minus_points += 1
+			# print "date"
+
+		tu.src_phrase = self.date_re.sub("", tu.src_phrase)
+		tu.trg_phrase = self.date_re.sub("", tu.trg_phrase)
+
+		# - Numbers --------------------------------------------------------------
+		src_nums = len(self.num_re.findall(tu.src_phrase))
+		trg_nums = len(self.num_re.findall(tu.trg_phrase))
+		if src_nums != trg_nums:
+			minus_points += 1
+			# print "num"
+			# print tu.src_phrase
+			# print tu.trg_phrase
+
+		# - Reference tags -------------------------------------------------------
+		src_ref = len(self.ref_re.findall(tu.src_phrase))
+		trg_ref = len(self.ref_re.findall(tu.trg_phrase))
+		if src_ref != trg_ref:
+			minus_points += 1
+			# print "ref"
+
+		tu.src_phrase = self.ref_re.sub("", tu.src_phrase)
+		tu.trg_phrase = self.ref_re.sub("", tu.trg_phrase)
+
+		# - XML tags -------------------------------------------------------------
+		src_xml_tag = len(self.xml_re.findall(tu.src_phrase))
+		trg_xml_tag = len(self.xml_re.findall(tu.trg_phrase))
+		if src_xml_tag != trg_xml_tag:
+			minus_points += 1
+			# print "xml"
+
+		# - Emails ---------------------------------------------------------------
+		src_emails = len(self.email_re.findall(tu.src_phrase))
+		trg_emails = len(self.email_re.findall(tu.trg_phrase))
+		if src_emails != trg_emails:
+			minus_points += 1
+			# print "email"
+
+		# - URLs -----------------------------------------------------------------
+		src_urls = len(self.url_re.findall(tu.src_phrase))
+		trg_urls = len(self.url_re.findall(tu.trg_phrase))
+		if src_urls != trg_urls:
+			minus_points += 1
+			# print "url"
+
+		# - Image tags -----------------------------------------------------------
+		src_img_tag = len(self.image_re.findall(tu.src_phrase))
+		trg_img_tag = len(self.image_re.findall(tu.trg_phrase))
+		if src_img_tag != trg_img_tag:
+			minus_points += 1
+			# print "img"
+
+		# - Category tags --------------------------------------------------------
+		src_cat_tag = len(self.category_re.findall(tu.src_phrase))
+		trg_cat_tag = len(self.category_re.findall(tu.trg_phrase))
+		if src_cat_tag != trg_cat_tag:
+			minus_points += 1
+			# print "cat"
+
+		if minus_points > 1:
+			return [0]
+		return [1]
 
 	def do_after_a_full_scan(self, num_of_finished_scans):
 		pass

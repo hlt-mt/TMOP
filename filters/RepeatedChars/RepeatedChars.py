@@ -12,10 +12,10 @@ class RepeatedChars(AbstractFilter):
 		self.repeated_chars_re = None
 
 	#
-	def initialize(self, source_language, target_language):
-		self.num_of_scans = 0
-		self.src_language = source_language
-		self.trg_language = target_language
+	def initialize(self, source_language, target_language, extra_args):
+		self.num_of_scans = 1
+		self.src_language = extra_args['source language']
+		self.trg_language = extra_args['target language']
 
 		self.repeated_chars_re = re.compile(r"(\w)\1{2,}")
 		return
@@ -24,7 +24,14 @@ class RepeatedChars(AbstractFilter):
 		pass
 
 	def process_tu(self, tu, num_of_finished_scans):
-		pass
+		minus_points = 0
+
+		src_repeated_chars = len(self.repeated_chars_re.findall(tu.src_phrase))
+		trg_repeated_chars = len(self.repeated_chars_re.findall(tu.trg_phrase))
+
+		if src_repeated_chars != trg_repeated_chars:
+			return [0]
+		return [1]
 
 	def do_after_a_full_scan(self, num_of_finished_scans):
 		pass
