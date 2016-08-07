@@ -130,7 +130,7 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 	def process_tu(self, tu, num_of_finished_scans):
 		if (num_of_finished_scans == 0 and self.num_of_scans == 1) or num_of_finished_scans == 2:
 			if len(tu.src_phrase) == 0 or len(tu.trg_phrase) == 0:
-				return
+				return [0]
 
 			index = -1
 			src_vectors = {}
@@ -139,7 +139,7 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 					index = self.all_words[w]
 					src_vectors[i] = self.vectors[index]
 			if index == -1:
-				return
+				return [0]
 
 			index = -1
 			trg_vectors = {}
@@ -148,7 +148,7 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 					index = self.all_words[w]
 					trg_vectors[i] = self.vectors[index]
 			if index == -1:
-				return
+				return [0]
 
 			trg_mark = Set()
 			avg_distance = 0.0
@@ -177,12 +177,14 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 				counter += 1
 
 			if counter == 0:
-				return
+				return [0]
 			avg_distance /= counter
 
 			self.n += 1
 			self.sum += avg_distance
 			self.sum_sq += avg_distance * avg_distance
+
+			return [avg_distance]
 
 		elif num_of_finished_scans == 0:
 			self.all_words += tu.src_tokens

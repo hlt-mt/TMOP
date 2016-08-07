@@ -1,4 +1,5 @@
 from tm_manager import *
+import sys
 """
 TMoP - Translation Memory Open-Source Purifier by Matteo Negri, Masoud Jalili Sabet and Marco Turchi, October 2015
 
@@ -32,6 +33,9 @@ or implied, of the copyright holder.
 """
 
 if __name__ == "__main__":
-	manager = TMManager()
+	config_file = ""
+	if len(sys.argv) > 1:
+		config_file = sys.argv[1]
+	manager = TMManager(config_file)
 
 	manager.run()

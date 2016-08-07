@@ -129,7 +129,7 @@ class WE_BestAlignScore(AbstractFilter):
 	def process_tu(self, tu, num_of_finished_scans):
 		if (num_of_finished_scans == 0 and self.num_of_scans == 1) or num_of_finished_scans == 2:
 			if len(tu.src_phrase) == 0 or len(tu.trg_phrase) == 0:
-				return
+				return [0]
 
 			index = 0
 			src_vectors = []
@@ -139,7 +139,7 @@ class WE_BestAlignScore(AbstractFilter):
 					src_vectors.append(self.vectors[index])
 
 			if len(src_vectors) == 0:
-				return
+				return [0]
 
 			trg_vectors = []
 			for w in tu.trg_tokens:
@@ -148,7 +148,7 @@ class WE_BestAlignScore(AbstractFilter):
 					trg_vectors.append(self.vectors[index])
 
 			if len(trg_vectors) == 0:
-				return
+				return [0]
 
 			avg_distance = 0.0
 			min_src_dist = [1.0] * len(src_vectors)
@@ -171,6 +171,8 @@ class WE_BestAlignScore(AbstractFilter):
 			self.n += 1
 			self.sum += avg_distance
 			self.sum_sq += avg_distance * avg_distance
+
+			return [avg_distance]
 
 		elif num_of_finished_scans == 0:
 			self.all_words += tu.src_tokens

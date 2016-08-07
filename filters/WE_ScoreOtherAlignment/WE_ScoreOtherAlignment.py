@@ -129,7 +129,7 @@ class WE_ScoreOtherAlignment(AbstractFilter):
 	def process_tu(self, tu, num_of_finished_scans):
 		if (num_of_finished_scans == 0 and self.num_of_scans == 1) or num_of_finished_scans == 2:
 			if len(tu.src_phrase) == 0 or len(tu.trg_phrase) == 0:
-				return
+				return [0]
 
 			index = -1
 			src_vectors = []
@@ -141,7 +141,7 @@ class WE_ScoreOtherAlignment(AbstractFilter):
 					src_vectors.append(None)
 
 			if index == -1:
-				return
+				return [0]
 
 			index = -1
 			trg_vectors = []
@@ -153,7 +153,7 @@ class WE_ScoreOtherAlignment(AbstractFilter):
 					trg_vectors.append(None)
 
 			if index == -1:
-				return
+				return [0]
 
 			avg_distance = 0.0
 			counter = 0.0
@@ -162,7 +162,7 @@ class WE_ScoreOtherAlignment(AbstractFilter):
 				t_w = align_pair[1]
 
 				if s_w >= len(src_vectors) or t_w >= len(trg_vectors):
-					return
+					return [0]
 				if src_vectors[s_w] is None or trg_vectors[t_w] is None:
 					continue
 				dist = cosine(src_vectors[s_w], trg_vectors[t_w])
@@ -171,12 +171,14 @@ class WE_ScoreOtherAlignment(AbstractFilter):
 				counter += 1
 
 			if counter == 0:
-				return
+				return [0]
 			avg_distance /= counter
 
 			self.n += 1
 			self.sum += avg_distance
 			self.sum_sq += avg_distance * avg_distance
+
+			return [avg_distance]
 
 		elif num_of_finished_scans == 0:
 			self.all_words += tu.src_tokens

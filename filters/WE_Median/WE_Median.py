@@ -129,7 +129,7 @@ class WE_Median(AbstractFilter):
 	def process_tu(self, tu, num_of_finished_scans):
 		if (num_of_finished_scans == 0 and self.num_of_scans == 1) or num_of_finished_scans == 2:
 			if len(tu.src_phrase) == 0 or len(tu.trg_phrase) == 0:
-				return
+				return [0]
 
 			src_vectors = []
 			for w in tu.src_tokens:
@@ -138,7 +138,7 @@ class WE_Median(AbstractFilter):
 					src_vectors.append(self.vectors[index])
 
 			if len(src_vectors) == 0:
-				return
+				return [0]
 			src_rep = np.sum(src_vectors, axis=0)
 
 			trg_vectors = []
@@ -148,7 +148,7 @@ class WE_Median(AbstractFilter):
 					trg_vectors.append(self.vectors[index])
 
 			if len(trg_vectors) == 0:
-				return
+				return [0]
 			trg_rep = np.sum(trg_vectors, axis=0)
 
 			distance = cosine(src_rep, trg_rep)
@@ -156,6 +156,8 @@ class WE_Median(AbstractFilter):
 			self.n += 1
 			self.sum += distance
 			self.sum_sq += distance * distance
+
+			return [distance]
 
 		elif num_of_finished_scans == 0:
 			self.all_words += tu.src_tokens

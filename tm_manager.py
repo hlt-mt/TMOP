@@ -47,7 +47,7 @@ class TMManager:
 	"""
 
 	#
-	def __init__(self):
+	def __init__(self, conf_file_name=""):
 		# Adding filter folder to path. after this filters can import 'AbstractFilter'.
 		sys.path.append(os.getcwd() + '/filters/')
 		sys.path.append(os.getcwd() + '/policies/')
@@ -72,6 +72,8 @@ class TMManager:
 		self.have_token = False
 		self.create_out_files = True
 
+		self.config_file_name = conf_file_name
+
 	#
 	def load_options_from_config_file(self):
 		"""
@@ -84,7 +86,10 @@ class TMManager:
 
 		print "Loading Options fro the config file ...\n"
 
-		conf_file = open("config.json")
+		if self.config_file_name:
+			conf_file = open(self.config_file_name)
+		else:
+			conf_file = open("config.json")
 		try:
 			config = json.load(conf_file)
 		except ValueError:
