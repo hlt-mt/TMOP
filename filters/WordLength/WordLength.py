@@ -104,6 +104,26 @@ class WordLength(AbstractFilter):
 
 	#
 	def process_tu(self, tu, num_of_finished_scans):
+		if self.model_exist:
+			src_ool_words = 0  # Out of Length words
+			trg_ool_words = 0  # Out of Length words
+
+			for word in tu.src_tokens:
+				tmp = abs(len(word) - self.src_mean)
+
+				if tmp > self.var_mult * self.src_var:
+					src_ool_words += 1
+
+			for word in tu.trg_tokens:
+				tmp = abs(len(word) - self.trg_mean)
+
+				if tmp > self.var_mult * self.trg_var:
+					trg_ool_words += 1
+
+			if src_ool_words > 0 or trg_ool_words > 0:
+				return [0]
+			return [1]
+
 		for word in tu.src_tokens:
 			self.src_n += 1
 			self.src_sum += len(word)
@@ -117,6 +137,7 @@ class WordLength(AbstractFilter):
 			self.trg_sum_sq += len(word) * len(word)
 
 			self.trg_scores.append(len(word))
+
 
 	def do_after_a_full_scan(self, num_of_finished_scans):
 		pass
