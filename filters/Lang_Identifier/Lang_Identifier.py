@@ -10,11 +10,13 @@ class Lang_Identifier(AbstractFilter):
 		self.trg_language = ""
 
 	def initialize(self, source_language, target_language, extra_args):
-		self.num_of_scans = 1
+		self.num_of_scans = 0
 		self.src_language = extra_args['source language']
 		self.trg_language = extra_args['target language']
 		self.normalize = extra_args['normalize scores']
 
+		if extra_args['emit scores'] == True:
+			self.num_of_scans = 1
 		langid.load_model()
 		return
 

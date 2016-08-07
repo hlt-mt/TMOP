@@ -36,29 +36,44 @@ class LongestUnalignedSequence(AbstractFilter):
 		self.src_language = extra_args['source language']
 		self.trg_language = extra_args['target language']
 		self.normalize = extra_args['normalize scores']
-		self.model_filename = "models/" + extra_args['input filename'] + "__LongestUnalignedSequence.stats"
+		self.model_filename = "models/LongestUnalignedSequence.stats"
 		if self.normalize:
 			self.model_filename += "_n"
 
 		if os.path.isfile(self.model_filename):
-			self.num_of_scans = 0
-
+			lang_pair = self.src_language + self.trg_language
 			f = open(self.model_filename, 'r')
-			l = f.readline().strip().split("\t")
-			self.src_mean = float(l[1])
-			self.src_var = float(l[2])
 
-			l = f.readline().strip().split("\t")
-			self.trg_mean = float(l[1])
-			self.trg_var = float(l[2])
+			l = f.readline()
+			while l:
+				if lang_pair not in l:
+					l = f.readline()
+					continue
+
+				# found the statistics
+				self.model_exist = True
+				self.num_of_scans = 0
+
+				l = f.readline().strip().split("\t")
+				self.src_mean = float(l[1])
+				self.src_var = float(l[2])
+
+				l = f.readline().strip().split("\t")
+				self.trg_mean = float(l[1])
+				self.trg_var = float(l[2])
+
+				break
 
 			f.close()
-			print "Loaded stats from the model file."
+			if self.model_exist:
+				print "Loaded stats from the model file."
 
+		if extra_args['emit scores'] == True:
+			self.num_of_scans = 1
 		return
 
 	def finalize(self):
-		if self.num_of_scans == 0:
+		if self.model_exist:
 			return
 
 		if self.n <= 1:
@@ -71,7 +86,9 @@ class LongestUnalignedSequence(AbstractFilter):
 		self.trg_var = (self.trg_sum_sq - (self.trg_sum * self.trg_sum) / self.n) / (self.n - 1)
 		self.trg_var = math.sqrt(self.trg_var)
 
-		f = open(self.model_filename, 'w')
+		f = open(self.model_filename, 'a')
+		lang_pair = self.src_language + self.trg_language
+		f.write("\n" + lang_pair + "\n")
 
 		f.write("source\t" + str(self.src_mean) + "\t" + str(self.src_var) + "\n")
 		f.write("target\t" + str(self.trg_mean) + "\t" + str(self.trg_var) + "\n")

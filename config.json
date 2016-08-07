@@ -1,26 +1,22 @@
 {
 	"options": {
-		"input file1":				"sample_en_it.csv",
-		"input file":				"en_it_1m_with_bgold",
+		"input file":				"sample_en_it.csv",
 
-		"align file1":				"sample_align",
-		"token file1":				"sample_token",
-		"align file":				"en_it_1m_with_bgold.align",
-		"token file":				"en_it_1m_with_bgold.tok",
+		"align file":				"sample_align",
+		"token file":				"sample_token",
 
 		"output folder":			"output",
 		"source language":			"en",
 		"target language":			"it",
 
 		"normalize scores":			"true",
-		"emit scores":				"true",
+		"emit scores":				"false",
 		"no out files":				"true",
-
-		"max decision":				"0"
+		"max decision":				0
 	},
 
 	"policies": [
-		["OneNo",					"on"],
+		["OneNo",					"off"],
 		["TwentyNo",				"off"],
 		["MajorityVoting",			"off"],
 		["SingleFilterPolicy",		"off"]
@@ -30,18 +26,18 @@
 		["SampleFilter",					"off"],
 		["LengthStats",						"off"],
 
-		["LengthRatio",						"on"],
-		["ReverseLengthRatio",				"of"],
-		["WordRatio",						"of"],
-		["ReverseWordRatio",				"of"],
-		["WordLength",						"of"],
-		["TagFinder",						"of"],
-		["RepeatedChars",					"of"],
-		["RepeatedWords",					"of"],
+		["LengthRatio",						"off"],
+		["ReverseLengthRatio",				"off"],
+		["WordRatio",						"off"],
+		["ReverseWordRatio",				"off"],
+		["WordLength",						"off"],
+		["TagFinder",						"off"],
+		["RepeatedChars",					"off"],
+		["RepeatedWords",					"off"],
 
 		["Lang_Identifier",					"off"],
 
-		["AlignedProportion",				"off"],
+		["AlignedProportion",				"on"],
 		["BigramAlignedProportion",			"off"],
 		["NumberOfUnalignedSequences",		"off"],
 		["LongestAlignedSequence",			"off"],

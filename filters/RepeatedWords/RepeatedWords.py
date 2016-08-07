@@ -13,11 +13,13 @@ class RepeatedWords(AbstractFilter):
 
 	#
 	def initialize(self, source_language, target_language, extra_args):
-		self.num_of_scans = 1
+		self.num_of_scans = 0
 		self.src_language = extra_args['source language']
 		self.trg_language = extra_args['target language']
 
 		self.repeated_words_re = re.compile(r"\b(\w+)(\s+\1)+\b")
+		if extra_args['emit scores'] == True:
+			self.num_of_scans = 1
 		return
 
 	def finalize(self):

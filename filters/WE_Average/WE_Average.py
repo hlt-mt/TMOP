@@ -27,8 +27,8 @@ class WE_Average(AbstractFilter):
 		self.vectors = None
 		self.number_of_tus = 0
 
-		self.model_file_name = "models/vectors_bg_model_1m"
-		self.dict_file_name = "models/dict_1m"
+		self.model_file_name = "models/vectors_"
+		self.dict_file_name = "models/dict_"
 
 		self.n = 0.0
 		self.sum = 0.0
@@ -43,9 +43,12 @@ class WE_Average(AbstractFilter):
 		self.src_language = extra_args['source language']
 		self.trg_language = extra_args['target language']
 		self.normalize = extra_args['normalize scores']
-		self.stat_filename = "models/" + extra_args['input filename'] + "__WE_Average.stats"
+		self.stat_filename = "models/WE_Average.stats"
 		if self.normalize:
 			self.stat_filename += "_n"
+
+		self.model_file_name += self.src_language + self.trg_language
+		self.dict_file_name += self.src_language + self.trg_language
 
 		if os.path.isfile(self.model_file_name):
 			print "Loading from file ..."
@@ -64,20 +67,35 @@ class WE_Average(AbstractFilter):
 			f.close()
 
 		if os.path.isfile(self.stat_filename):
-			self.num_of_scans = 0
-
+			lang_pair = self.src_language + self.trg_language
 			f = open(self.stat_filename, 'r')
-			l = f.readline().strip().split("\t")
-			self.mean = float(l[1])
-			self.var = float(l[2])
+
+			l = f.readline()
+			while l:
+				if lang_pair not in l:
+					l = f.readline()
+					continue
+
+				# found the statistics
+				self.model_exist = True
+				self.num_of_scans = 0
+
+				l = f.readline().strip().split("\t")
+				self.mean = float(l[1])
+				self.var = float(l[2])
+
+				break
 
 			f.close()
-			print "Loaded stats from the model file."
+			if self.model_exist:
+				print "Loaded stats from the model file."
 
+		if extra_args['emit scores'] == True:
+			self.num_of_scans = 1
 		return
 
 	def finalize(self):
-		if self.num_of_scans == 0:
+		if self.model_exist:
 			return
 
 		if self.num_of_scans == 1:
@@ -102,7 +120,9 @@ class WE_Average(AbstractFilter):
 		self.var = (self.sum_sq - (self.sum * self.sum) / self.n) / (self.n - 1)
 		self.var = math.sqrt(self.var)
 
-		f = open(self.stat_filename, 'w')
+		f = open(self.stat_filename, 'a')
+		lang_pair = self.src_language + self.trg_language
+		f.write("\n" + lang_pair + "\n")
 		f.write("stats\t" + str(self.mean) + "\t" + str(self.var) + "\n")
 		f.close()
 

@@ -21,9 +21,11 @@ class TagFinder(AbstractFilter):
 
 #
 	def initialize(self, source_language, target_language, extra_args):
-		self.num_of_scans = 1
+		self.num_of_scans = 0
 		self.src_language = extra_args['source language']
 		self.trg_language = extra_args['target language']
+		if extra_args['emit scores'] == True:
+			self.num_of_scans = 1
 
 		# ------------------------------------------------------------------------
 		date_regex = r"(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]|(?:Jan|Mar|May|Jul|Aug|Oct|Dec)))\1|" \

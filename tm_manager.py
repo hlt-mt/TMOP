@@ -116,14 +116,20 @@ class TMManager:
 		if 'token file' in self.options:
 			self.have_token = True
 		if 'no out files' in self.options:
-			if self.options['no out files'] == 'true':
+			if self.options['no out files'].lower() in ['true', 'yes', 'ok']:
 				self.create_out_files = False
+			else:
+				self.create_out_files = True
 		if 'normalize scores' in self.options:
-			if self.options['normalize scores'] == 'true':
+			if self.options['normalize scores'].lower() in ['true', 'yes', 'ok']:
 				self.normalize_scores = True
+			else:
+				self.normalize_scores = False
 		if 'emit scores' in self.options:
-			if self.options['emit scores'] == 'true':
+			if self.options['emit scores'].lower() in ['true', 'yes', 'ok']:
 				self.have_scores = True
+			else:
+				self.have_scores = False
 
 		# making the output folder
 		path = os.getcwd() + "/" + self.options['output folder']
@@ -339,8 +345,9 @@ class TMManager:
 		filters_arguments = {}
 		filters_arguments["source language"] = self.options['source language']
 		filters_arguments["target language"] = self.options['target language']
-		filters_arguments["normalize scores"] = self.normalize_scores
 		filters_arguments["input filename"] = self.options['input file']
+		filters_arguments["normalize scores"] = self.normalize_scores
+		filters_arguments["emit scores"] = self.have_scores
 
 		for i in range(len(self.filters)):
 			try:
@@ -560,7 +567,7 @@ class TMManager:
 
 			# Exiting the decision section for the rest of the TM
 			if 'max decision' in self.options:
-				if self.options['max decision'] < line_no:
+				if self.options['max decision'] >= 0 and self.options['max decision'] < line_no:
 					break
 
 			if self.have_alignment is True:
