@@ -11,21 +11,21 @@
 
 		"normalize scores":			"true",
 		"emit scores":				"false",
-		"no out files":				"true",
+		"no out files":				"false",
 		"max decision":				-1
 	},
 
 	"policies": [
-		["OneNo",					"off"],
-		["TwentyNo",				"on"],
+		["OneNo",					"on"],
+		["TwentyNo",				"off"],
 		["MajorityVoting",			"off"]
 	],
 
 	"filters": [
-		["SampleFilter",					"off"],
+		["SampleFilter",					"on"],
 		["LengthStats",						"off"],
 
-		["LengthRatio",						"on"],
+		["LengthRatio",						"off"],
 		["ReverseLengthRatio",				"off"],
 		["WordRatio",						"off"],
 		["ReverseWordRatio",				"off"],

@@ -116,25 +116,29 @@ class TMManager:
 		if 'output folder' not in self.options:
 			print "The 'output folder' is not indicated in config file. It is set to default('output')."
 			self.options['output folder'] = "output"
+
+		self.have_alignment = False
 		if 'align file' in self.options:
 			self.have_alignment = True
+
+		self.have_token = False
 		if 'token file' in self.options:
 			self.have_token = True
+
+		self.create_out_files = True
 		if 'no out files' in self.options:
 			if self.options['no out files'].lower() in ['true', 'yes', 'ok']:
 				self.create_out_files = False
-			else:
-				self.create_out_files = True
+
+		self.normalize_scores = False
 		if 'normalize scores' in self.options:
 			if self.options['normalize scores'].lower() in ['true', 'yes', 'ok']:
 				self.normalize_scores = True
-			else:
-				self.normalize_scores = False
+
+		self.have_scores = False
 		if 'emit scores' in self.options:
 			if self.options['emit scores'].lower() in ['true', 'yes', 'ok']:
 				self.have_scores = True
-			else:
-				self.have_scores = False
 
 		# making the output folder
 		path = os.getcwd() + "/" + self.options['output folder']
