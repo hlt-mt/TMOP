@@ -22,6 +22,8 @@ class LengthRatio(AbstractFilter):
 		self.scores = []
 		self.thresh = 0.0
 
+		self.model_exist = False
+
 	def initialize(self, source_language, target_language, extra_args):
 		self.num_of_scans = 1
 		self.src_language = extra_args['source language']

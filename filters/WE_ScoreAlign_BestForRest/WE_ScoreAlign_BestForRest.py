@@ -38,6 +38,8 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 		self.mean = 0.0
 		self.var = 0.0
 
+		self.model_exist = False
+
 	#
 	def initialize(self, source_language, target_language, extra_args):
 		self.num_of_scans = 3

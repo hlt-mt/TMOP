@@ -32,6 +32,8 @@ class WordLength(AbstractFilter):
 		self.s_thresh = 0.0
 		self.t_thresh = 0.0
 
+		self.model_exist = False
+
 	#
 	def initialize(self, source_language, target_language, extra_args):
 		self.num_of_scans = 1

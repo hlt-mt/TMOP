@@ -494,7 +494,8 @@ class TMManager:
 				for filter_tuple in active_filters:
 					try:
 						score = filter_tuple[1].process_tu(copy(tu), filter_tuple[2])
-						scores.append(score)
+						if score is not None:
+							scores.append(score)
 					except Exception, e:
 						print "The filter", filter_tuple[0], "has problems processing the TU in line:", line_no
 						print "The Exception:"

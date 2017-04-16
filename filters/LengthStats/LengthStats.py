@@ -35,13 +35,14 @@ class LengthStats(AbstractFilter):
 		print 'src word mean:', self.src_wsum / self.n
 		print 'trg word mean:', self.trg_wsum / self.n
 
-
 	def process_tu(self, tu, num_of_finished_scans):
 		self.src_wsum += len(tu.src_tokens)
 		self.trg_wsum += len(tu.trg_tokens)
 		self.src_sum += len(tu.src_phrase)
 		self.trg_sum += len(tu.trg_phrase)
 		self.n += 1
+
+		return None
 
 	def do_after_a_full_scan(self, num_of_finished_scans):
 		return

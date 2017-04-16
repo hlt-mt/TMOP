@@ -23,12 +23,14 @@ class WordRatio(AbstractFilter):
 		self.scores = []
 		self.thresh = 0.0
 
+		self.model_exist = False
+
 	def initialize(self, source_language, target_language, extra_args):
 		self.num_of_scans = 1
 		self.src_language = extra_args['source language']
 		self.trg_language = extra_args['target language']
 		self.normalize = extra_args['normalize scores']
-		self.model_filename = "models/UnalignedSequenceLength.stats"
+		self.model_filename = "models/WordRatio.stats"
 		if self.normalize:
 			self.model_filename += "_n"
 
