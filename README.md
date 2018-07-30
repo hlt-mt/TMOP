@@ -13,11 +13,23 @@ iii) awkward according to some formatting criteria.
 
 TMop has been developed at [Fondazione Bruno Kessler](https://hlt-mt.fbk.eu) with the support of the European Association of Machine Translation (EAMT) and the European Project [Modern Machine Translation (MMT)](http://www.modernmt.eu). It can be downloaded as a package including: software, documentation, toy data and evaluation scripts. 
 
+# Citing
+
+If you use TMOP in your research, please cite [TMop: a Tool for Unsupervised Translation Memory Cleaning](https://aclanthology.coli.uni-saarland.de/papers/P16-4009/p16-4009).
+```
+@InProceedings{jalilisabet2016tmop,
+  title = {TMop: a Tool for Unsupervised Translation Memory Cleaning},
+  author = {Jalili Sabet, Masoud and Negri, Matteo and Turchi, Marco and de Souza, Jos{\'e} GC and Federico, Marcello},
+  journal = {Proceedings of ACL-2016 System Demonstrations},
+  pages = {49--54},
+  year = {2016}
+}
+```
 
 # Contacts
 
-[Matteo Negri](http://hlt-mt.fbk.eu/people/profile/negri), Fondazione Bruno Kessler, Italy (negri@fbk.eu)
+[Matteo Negri](http://hlt-mt.fbk.eu/people/profile/negri), Fondazione Bruno Kessler, Italy (negri_at_fbk.eu)
 
-Masoud Jalili Sabet, University of Teheran, Iran (jalili.masoud@gmail.com)
+Masoud Jalili Sabet, Ludwig Maximilian University of Munich, Germany (jalili.masoud_at_cis.lmu.de)
 
-[Marco Turchi](http://hlt-mt.fbk.eu/people/profile/turchi), Fondazione Bruno Kesler, Italy (turchi@fbk.eu)
+[Marco Turchi](http://hlt-mt.fbk.eu/people/profile/turchi), Fondazione Bruno Kesler, Italy (turchi_at_fbk.eu)
