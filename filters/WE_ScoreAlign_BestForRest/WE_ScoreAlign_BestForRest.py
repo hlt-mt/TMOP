@@ -9,7 +9,6 @@ from sets import Set
 import numpy as np
 import os.path
 import math
-# from sklearn.decomposition import TruncatedSVD as SVD
 
 
 class WE_ScoreAlign_BestForRest(AbstractFilter):
@@ -55,6 +54,7 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 
 		if os.path.isfile(self.model_file_name):
 			print "Loading from file ..."
+			# Don't need to train vectors
 			self.num_of_scans = 1
 
 			lsi = lsimodel.LsiModel.load(self.model_file_name)
@@ -79,7 +79,7 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 					l = f.readline()
 					continue
 
-				# found the statistics
+				# Found the statistics (Don't need to calculate statistics either)
 				self.model_exist = True
 				self.num_of_scans = 0
 
@@ -90,8 +90,6 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 				break
 
 			f.close()
-			if self.model_exist:
-				print "Loaded stats from the model file."
 
 		if extra_args['emit scores'] == True:
 			self.num_of_scans = 1
@@ -99,23 +97,10 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 
 	def finalize(self):
 		if self.model_exist:
+			print "Loaded stats from the model file."
 			return
-
-		if self.num_of_scans == 1:
+		elif self.num_of_scans == 1:
 			print "Loaded the model from file."
-		else:
-			print "Performing SVD..."
-
-			# svd = SVD(n_components=self.num_of_features, random_state=42)
-			# x = svd.fit_transform(self.vectors)
-			# self.vectors = x
-
-			x = Sparse2Corpus(self.vectors)
-			lsi = lsimodel.LsiModel(corpus=x, id2word=None, num_topics=self.num_of_features)
-			lsi.save(self.model_file_name)
-			self.vectors = lsi.projection.u
-
-			print "done."
 
 		if self.n <= 1:
 			self.n = 2.0
@@ -130,6 +115,7 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 		f.close()
 
 	def process_tu(self, tu, num_of_finished_scans):
+		# The iteration before the last one (calculates the mean and variance based on the vectors)
 		if (num_of_finished_scans == 0 and self.num_of_scans == 1) or num_of_finished_scans == 2:
 			if len(tu.src_phrase) == 0 or len(tu.trg_phrase) == 0:
 				return [0]
@@ -188,10 +174,12 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 
 			return [avg_distance]
 
+		# First iteration of a normal run (collecting the vocabulary)
 		elif num_of_finished_scans == 0:
 			self.all_words += tu.src_tokens
 			self.all_words += tu.trg_tokens
 			self.number_of_tus += 1
+		# Second iteration of a normal run (making the tu-word matrix)
 		else:
 			for w in tu.src_tokens + tu.trg_tokens:
 				if w in self.all_words:
@@ -200,16 +188,15 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 			self.number_of_tus += 1
 
 	def do_after_a_full_scan(self, num_of_finished_scans):
+		# First iteration of a normal run (collecting the vocabulary)
 		if num_of_finished_scans == 1 and self.num_of_scans == 3:
 			self.vocab = Counter(self.all_words)
 
 			self.all_words = {}
 			for word in self.vocab:
 				if self.vocab[word] >= self.min_count:
-					# self.all_words.append(word)
 					self.all_words[word] = len(self.all_words)
 
-			# if self.num_of_scans == 2:
 			self.vectors = lil_matrix((len(self.all_words), self.number_of_tus), dtype=np.int8)
 
 			print "-#-#-#-#-#-#-#-#-#-#-#-"
@@ -221,8 +208,20 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 			f = open(self.dict_file_name, "wb")
 
 			for w in self.all_words:
-				f.write(w + "\t" + str(self.all_words[w]) + "\n")
+				f.write(w.encode("utf-8"))
+				f.write("\t" + str(self.all_words[w]) + "\n")
 			f.close()
+
+		# Second iteration of a normal run (making the tu-word matrix)
+		elif num_of_finished_scans == 2:
+			print "Performing SVD..."
+
+			x = Sparse2Corpus(self.vectors)
+			lsi = lsimodel.LsiModel(corpus=x, id2word=None, num_topics=self.num_of_features)
+			lsi.save(self.model_file_name)
+			self.vectors = lsi.projection.u
+
+			print "done."
 		else:
 			print "-#-#-#-#-#-#-#-#-#-#-#-"
 
@@ -238,8 +237,6 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 				index = self.all_words[w]
 				src_vectors[i] = self.vectors[index]
 
-		# if len(src_vectors) == 0:
-		# 	return 'neutral'
 		if index == -1:
 			return 'neutral'
 
@@ -250,8 +247,6 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 				index = self.all_words[w]
 				trg_vectors[i] = self.vectors[index]
 
-		# if len(trg_vectors) == 0:
-		# 	return 'neutral'
 		if index == -1:
 			return 'neutral'
 
@@ -262,11 +257,6 @@ class WE_ScoreAlign_BestForRest(AbstractFilter):
 			s_w = align_pair[0]
 			t_w = align_pair[1]
 
-			# if s_w >= len(tu.src_tokens) or t_w >= len(tu.trg_tokens):
-				# print "odd :"
-				# print s_w, "\t", len(src_vectors)
-				# print t_w, "\t", len(trg_vectors)
-				# return 'bug'
 			if s_w in src_vectors and t_w in trg_vectors:
 				dist = cosine(src_vectors[s_w], trg_vectors[t_w])
 				trg_mark.add(t_w)
