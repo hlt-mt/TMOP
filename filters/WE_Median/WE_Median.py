@@ -8,7 +8,6 @@ from gensim.models import lsimodel
 import numpy as np
 import os.path
 import math
-# from sklearn.decomposition import TruncatedSVD as SVD
 
 
 class WE_Median(AbstractFilter):
@@ -54,6 +53,8 @@ class WE_Median(AbstractFilter):
 
 		if os.path.isfile(self.model_file_name):
 			print "Loading from file ..."
+
+			# Don't need to train vectors
 			self.num_of_scans = 1
 
 			lsi = lsimodel.LsiModel.load(self.model_file_name)
@@ -73,12 +74,11 @@ class WE_Median(AbstractFilter):
 			f = open(self.stat_filename, 'r')
 
 			l = f.readline()
-			while l:
-				if lang_pair not in l:
-					l = f.readline()
-					continue
+			while l and lang_pair not in l:
+				l = f.readline()
 
-				# found the statistics
+			if lang_pair in l:
+				# Found the statistics (Don't need to calculate statistics either)
 				self.model_exist = True
 				self.num_of_scans = 0
 
@@ -86,11 +86,7 @@ class WE_Median(AbstractFilter):
 				self.mean = float(l[1])
 				self.var = float(l[2])
 
-				break
-
 			f.close()
-			if self.model_exist:
-				print "Loaded stats from the model file."
 
 		if extra_args['emit scores'] == True:
 			self.num_of_scans = 1
@@ -98,23 +94,10 @@ class WE_Median(AbstractFilter):
 
 	def finalize(self):
 		if self.model_exist:
+			print "Loaded stats from the model file."
 			return
-
-		if self.num_of_scans == 1:
+		elif self.num_of_scans == 1:
 			print "Loaded the model from file."
-		else:
-			print "Performing SVD..."
-
-			# svd = SVD(n_components=self.num_of_features, random_state=42)
-			# x = svd.fit_transform(self.vectors)
-			# self.vectors = x
-
-			x = Sparse2Corpus(self.vectors)
-			lsi = lsimodel.LsiModel(corpus=x, id2word=None, num_topics=self.num_of_features)
-			lsi.save(self.model_file_name)
-			self.vectors = lsi.projection.u
-
-			print "done."
 
 		if self.n <= 1:
 			self.n = 2.0
@@ -129,6 +112,7 @@ class WE_Median(AbstractFilter):
 		f.close()
 
 	def process_tu(self, tu, num_of_finished_scans):
+		# The iteration before the last one (calculates the mean and variance based on the vectors)
 		if (num_of_finished_scans == 0 and self.num_of_scans == 1) or num_of_finished_scans == 2:
 			if len(tu.src_phrase) == 0 or len(tu.trg_phrase) == 0:
 				return [0]
@@ -141,7 +125,7 @@ class WE_Median(AbstractFilter):
 
 			if len(src_vectors) == 0:
 				return [0]
-			src_rep = np.sum(src_vectors, axis=0)
+			src_rep = np.median(src_vectors, axis=0)
 
 			trg_vectors = []
 			for w in tu.trg_tokens:
@@ -151,7 +135,7 @@ class WE_Median(AbstractFilter):
 
 			if len(trg_vectors) == 0:
 				return [0]
-			trg_rep = np.sum(trg_vectors, axis=0)
+			trg_rep = np.median(trg_vectors, axis=0)
 
 			distance = cosine(src_rep, trg_rep)
 
@@ -161,10 +145,12 @@ class WE_Median(AbstractFilter):
 
 			return [distance]
 
+		# First iteration of a normal run (collecting the vocabulary)
 		elif num_of_finished_scans == 0:
 			self.all_words += tu.src_tokens
 			self.all_words += tu.trg_tokens
 			self.number_of_tus += 1
+		# Second iteration of a normal run (making the tu-word matrix)
 		else:
 			for w in tu.src_tokens + tu.trg_tokens:
 				if w in self.all_words:
@@ -173,16 +159,15 @@ class WE_Median(AbstractFilter):
 			self.number_of_tus += 1
 
 	def do_after_a_full_scan(self, num_of_finished_scans):
+		# First iteration of a normal run (collecting the vocabulary)
 		if num_of_finished_scans == 1 and self.num_of_scans == 3:
 			self.vocab = Counter(self.all_words)
 
 			self.all_words = {}
 			for word in self.vocab:
 				if self.vocab[word] >= self.min_count:
-					# self.all_words.append(word)
 					self.all_words[word] = len(self.all_words)
 
-			# if self.num_of_scans == 2:
 			self.vectors = lil_matrix((len(self.all_words), self.number_of_tus), dtype=np.float64)
 
 			print "-#-#-#-#-#-#-#-#-#-#-#-"
@@ -191,11 +176,23 @@ class WE_Median(AbstractFilter):
 			print "number of TUs:", self.number_of_tus
 			self.number_of_tus = 0
 
-			f = open(self.dict_file_name, "wb")
+			f = open(self.dict_file_name, 'wb')
 
 			for w in self.all_words:
-				f.write(w + "\t" + str(self.all_words[w]) + "\n")
+				f.write(w.encode("utf-8"))
+				f.write("\t" + str(self.all_words[w]) + "\n")
 			f.close()
+
+		# Second iteration of a normal run (making the tu-word matrix)
+		elif num_of_finished_scans == 2:
+			print "Performing SVD..."
+
+			x = Sparse2Corpus(self.vectors)
+			lsi = lsimodel.LsiModel(corpus=x, id2word=None, num_topics=self.num_of_features)
+			lsi.save(self.model_file_name)
+			self.vectors = lsi.projection.u
+
+			print "done."
 		else:
 			print "-#-#-#-#-#-#-#-#-#-#-#-"
 
