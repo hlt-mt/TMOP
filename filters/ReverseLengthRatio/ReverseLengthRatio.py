@@ -56,7 +56,7 @@ class ReverseLengthRatio(AbstractFilter):
 
 			f.close()
 			if self.model_exist:
-				print("Loaded stats from the model file.")
+				print ("Loaded stats from the model file.")
 
 		if extra_args['emit scores'] == True:
 			self.num_of_scans = 1
@@ -118,7 +118,7 @@ class ReverseLengthRatio(AbstractFilter):
 		return
 
 	def decide(self, tu):
-		ratio = len(tu.trg_phrase) / max(len(tu.src_phrase), 1.0)
+		ratio = int(len(tu.trg_phrase) / max(len(tu.src_phrase), 1.0))
 
 		if self.normalize:
 			ratio = min(ratio, 3.0)
