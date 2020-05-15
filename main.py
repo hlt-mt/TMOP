@@ -1,5 +1,3 @@
-from tm_manager import *
-import sys
 """
 TMoP - Translation Memory Open-Source Purifier by Matteo Negri, Masoud Jalili Sabet and Marco Turchi, October 2015
 
@@ -31,6 +29,10 @@ The views and conclusions contained in the software and documentation are those 
 authors and should not be interpreted as representing official policies, either expressed
 or implied, of the copyright holder.
 """
+
+from tm_manager import *
+import sys
+
 
 if __name__ == "__main__":
 	config_file = ""

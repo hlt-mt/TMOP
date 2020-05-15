@@ -63,72 +63,7 @@ class TagFinder(AbstractFilter):
 		pass
 
 	def process_tu(self, tu, num_of_finished_scans):
-		minus_points = 0
-
-		# - Dates ----------------------------------------------------------------
-		src_dates = len(self.date_re.findall(tu.src_phrase))
-		trg_dates = len(self.date_re.findall(tu.trg_phrase))
-		if src_dates != trg_dates:
-			minus_points += 1
-			# print "date"
-
-		tu.src_phrase = self.date_re.sub("", tu.src_phrase)
-		tu.trg_phrase = self.date_re.sub("", tu.trg_phrase)
-
-		# - Numbers --------------------------------------------------------------
-		src_nums = len(self.num_re.findall(tu.src_phrase))
-		trg_nums = len(self.num_re.findall(tu.trg_phrase))
-		if src_nums != trg_nums:
-			minus_points += 1
-			# print "num"
-			# print tu.src_phrase
-			# print tu.trg_phrase
-
-		# - Reference tags -------------------------------------------------------
-		src_ref = len(self.ref_re.findall(tu.src_phrase))
-		trg_ref = len(self.ref_re.findall(tu.trg_phrase))
-		if src_ref != trg_ref:
-			minus_points += 1
-			# print "ref"
-
-		tu.src_phrase = self.ref_re.sub("", tu.src_phrase)
-		tu.trg_phrase = self.ref_re.sub("", tu.trg_phrase)
-
-		# - XML tags -------------------------------------------------------------
-		src_xml_tag = len(self.xml_re.findall(tu.src_phrase))
-		trg_xml_tag = len(self.xml_re.findall(tu.trg_phrase))
-		if src_xml_tag != trg_xml_tag:
-			minus_points += 1
-			# print "xml"
-
-		# - Emails ---------------------------------------------------------------
-		src_emails = len(self.email_re.findall(tu.src_phrase))
-		trg_emails = len(self.email_re.findall(tu.trg_phrase))
-		if src_emails != trg_emails:
-			minus_points += 1
-			# print "email"
-
-		# - URLs -----------------------------------------------------------------
-		src_urls = len(self.url_re.findall(tu.src_phrase))
-		trg_urls = len(self.url_re.findall(tu.trg_phrase))
-		if src_urls != trg_urls:
-			minus_points += 1
-			# print "url"
-
-		# - Image tags -----------------------------------------------------------
-		src_img_tag = len(self.image_re.findall(tu.src_phrase))
-		trg_img_tag = len(self.image_re.findall(tu.trg_phrase))
-		if src_img_tag != trg_img_tag:
-			minus_points += 1
-			# print "img"
-
-		# - Category tags --------------------------------------------------------
-		src_cat_tag = len(self.category_re.findall(tu.src_phrase))
-		trg_cat_tag = len(self.category_re.findall(tu.trg_phrase))
-		if src_cat_tag != trg_cat_tag:
-			minus_points += 1
-			# print "cat"
-
+		minus_points = self.find_mismatches(tu)
 		if minus_points > 1:
 			return [0]
 		return [1]
@@ -137,14 +72,19 @@ class TagFinder(AbstractFilter):
 		pass
 
 	def decide(self, tu):
-		minus_points = 0
+		minus_points = self.find_mismatches(tu)
 
+		if minus_points > 1:
+			return 'reject'
+		return 'accept'
+
+	def find_mismatches(self, tu):
+		minus_points = 0
 		# - Dates ----------------------------------------------------------------
 		src_dates = len(self.date_re.findall(tu.src_phrase))
 		trg_dates = len(self.date_re.findall(tu.trg_phrase))
 		if src_dates != trg_dates:
 			minus_points += 1
-			# print "date"
 
 		tu.src_phrase = self.date_re.sub("", tu.src_phrase)
 		tu.trg_phrase = self.date_re.sub("", tu.trg_phrase)
@@ -154,16 +94,12 @@ class TagFinder(AbstractFilter):
 		trg_nums = len(self.num_re.findall(tu.trg_phrase))
 		if src_nums != trg_nums:
 			minus_points += 1
-			# print "num"
-			# print tu.src_phrase
-			# print tu.trg_phrase
 
 		# - Reference tags -------------------------------------------------------
 		src_ref = len(self.ref_re.findall(tu.src_phrase))
 		trg_ref = len(self.ref_re.findall(tu.trg_phrase))
 		if src_ref != trg_ref:
 			minus_points += 1
-			# print "ref"
 
 		tu.src_phrase = self.ref_re.sub("", tu.src_phrase)
 		tu.trg_phrase = self.ref_re.sub("", tu.trg_phrase)
@@ -173,46 +109,30 @@ class TagFinder(AbstractFilter):
 		trg_xml_tag = len(self.xml_re.findall(tu.trg_phrase))
 		if src_xml_tag != trg_xml_tag:
 			minus_points += 1
-			# print "xml"
 
 		# - Emails ---------------------------------------------------------------
 		src_emails = len(self.email_re.findall(tu.src_phrase))
 		trg_emails = len(self.email_re.findall(tu.trg_phrase))
 		if src_emails != trg_emails:
 			minus_points += 1
-			# print "email"
 
 		# - URLs -----------------------------------------------------------------
 		src_urls = len(self.url_re.findall(tu.src_phrase))
 		trg_urls = len(self.url_re.findall(tu.trg_phrase))
 		if src_urls != trg_urls:
 			minus_points += 1
-			# print "url"
 
 		# - Image tags -----------------------------------------------------------
 		src_img_tag = len(self.image_re.findall(tu.src_phrase))
 		trg_img_tag = len(self.image_re.findall(tu.trg_phrase))
 		if src_img_tag != trg_img_tag:
 			minus_points += 1
-			# print "img"
 
 		# - Category tags --------------------------------------------------------
 		src_cat_tag = len(self.category_re.findall(tu.src_phrase))
 		trg_cat_tag = len(self.category_re.findall(tu.trg_phrase))
 		if src_cat_tag != trg_cat_tag:
 			minus_points += 1
-			# print "cat"
 
-		if src_cat_tag > 0:
-			print "category tag -> edit them"
-			print src_cat_tag
-		if trg_cat_tag > 0:
-			print "category tag -> edit them"
-			print trg_cat_tag
+		return minus_points
 
-		# ------------------------------------------------------------------------
-		# ------------------------------------------------------------------------
-
-		if minus_points > 1:
-			return 'reject'
-		return 'accept'

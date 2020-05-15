@@ -4,7 +4,7 @@ from abstract_policy import *
 
 class SingleFilterPolicy(AbstractPolicy):
 	def __init__(self):
-		print "SingleFilterPolicy ready"
+		print("SingleFilterPolicy ready")
 		return
 
 	def decide(self, result_list):

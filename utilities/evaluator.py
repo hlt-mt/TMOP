@@ -76,68 +76,83 @@ if write_to_files:
 #------------------------------------------------------------------
 
 if (tp + tn + fp + fn) == 0:
-	print "No statistics to show."
-	print "All the numbers are zero."
+	print("No statistics to show.")
+	print("All the numbers are zero.")
 	exit()
 
 #------------------------------------------------------------------
 
 output_file = open(output_file_name, 'w')
 
-print "\n"
-print "True Positive:", tp
-print "True Negative:", tn
-print "False Positive:", fp
-print "False Negative:", fn
+print("True Positive: {}".format(tp))
+print("True Negative: {}".format(tn))
+print("False Positive: {}".format(fp))
+print("False Negative: {}".format(fn))
 
 output_file.write("True Positive: " + str(tp) + "\n")
 output_file.write("True Negative: " + str(tn) + "\n")
 output_file.write("False Positive: " + str(fp) + "\n")
 output_file.write("False Negative: " + str(fn) + "\n")
 
-print "\n----------------------------------\n"
+print("\n----------------------------------\n")
 output_file.write("\n----------------------------------\n")
 
-print "Accuracy :\t\t", (tp + tn)/(tp + tn + fp + fn)
-print "Balanced Acc :\t", 0.5 * (tp/(tp + fn) + tn/(tn + fp))
-print "Precision :\t\t", tp/(tp + fp)
-print "Recall :\t\t", tp/(tp + fn)
-print "F1 Measure :\t\t", (2. * tp)/((2. * tp) + fp + fn)
+acc = round((tp + tn)/(tp + tn + fp + fn), 3)
+bal_acc = round(0.5 * (tp/max(0.1, (tp + fn)) + tn/max(0.1, (tn + fp))), 3)
+prec = round(tp / max(0.1, (tp + fp)), 3)
+rec = round(tp / max(0.1, (tp + fn)), 3)
+f1 = round((2. * tp) / max(0.1, ((2. * tp) + fp + fn)), 3)
 
-output_file.write("Accuracy :\t\t" + str((tp + tn)/(tp + tn + fp + fn)) + "\n")
-output_file.write("Balanced Acc :\t" + str(0.5 * (tp/(tp + fn) + tn/(tn + fp))) + "\n")
-output_file.write("Precision :\t\t" + str(tp/(tp + fp)) + "\n")
-output_file.write("Recall :\t\t" + str(tp/(tp + fn)) + "\n")
-output_file.write("F1 Measure :\t" + str((2. * tp)/((2. * tp) + fp + fn)) + "\n")
+print("Accuracy :\t" + str(acc) + "\n")
+print("Balanced Acc :\t" + str(bal_acc) + "\n")
+print("Precision :\t" + str(prec) + "\n")
+print("Recall :\t" + str(rec) + "\n")
+print("F1 Measure :\t" + str(f1) + "\n")
 
-print "\nWith neutrals as accepted:"
-print "--------------------------\n"
+output_file.write("Accuracy :\t" + str(acc) + "\n")
+output_file.write("Balanced Acc :\t" + str(bal_acc) + "\n")
+output_file.write("Precision :\t" + str(prec) + "\n")
+output_file.write("Recall :\t" + str(rec) + "\n")
+output_file.write("F1 Measure :\t" + str(f1) + "\n")
+
+print("\nWith neutrals as accepted:")
+print("--------------------------\n")
 output_file.write("\nWith neutrals as accepted:\n")
 output_file.write("--------------------------\n\n")
 
-print "Accuracy :\t\t", (tp + n_acc_tp + tn)/(tp + n_acc_tp + tn + fp + n_acc_fp + fn)
-print "Precision :\t\t", (tp + n_acc_tp)/(tp + n_acc_tp + fp + n_acc_fp)
-print "Recall :\t\t", (tp + n_acc_tp)/(tp + n_acc_tp + fn)
-print "F1 Measure :\t\t", (2. * (tp + n_acc_tp))/(2. * (tp + n_acc_tp) + fp + n_acc_fp + fn)
+acc = round((tp + n_acc_tp + tn) / (tp + n_acc_tp + tn + fp + n_acc_fp + fn), 3)
+prec = round((tp + n_acc_tp) / max(0.1, (tp + n_acc_tp + fp + n_acc_fp)), 3)
+rec = round((tp + n_acc_tp) / max(0.1, (tp + n_acc_tp + fn)), 3)
+f1 = round((2. * (tp + n_acc_tp)) / max(0.1, (2. * (tp + n_acc_tp) + fp + n_acc_fp + fn)), 3)
 
-output_file.write("Accuracy :\t\t" + str((tp + n_acc_tp + tn)/(tp + n_acc_tp + tn + fp + n_acc_fp + fn)) + "\n")
-output_file.write("Precision :\t\t" + str((tp + n_acc_tp)/(tp + n_acc_tp + fp + n_acc_fp)) + "\n")
-output_file.write("Recall :\t\t" + str((tp + n_acc_tp)/(tp + n_acc_tp + fn)) + "\n")
-output_file.write("F1 Measure :\t" + str((2. * (tp + n_acc_tp))/(2. * (tp + n_acc_tp) + fp + n_acc_fp + fn)) + "\n")
+print("Accuracy :\t" + str(acc) + "\n")
+print("Precision :\t" + str(prec) + "\n")
+print("Recall :\t" + str(rec) + "\n")
+print("F1 Measure :\t" + str(f1) + "\n")
 
-print "\nWith neutrals as rejected:"
-print "--------------------------\n"
+output_file.write("Accuracy :\t" + str(acc) + "\n")
+output_file.write("Precision :\t" + str(prec) + "\n")
+output_file.write("Recall :\t" + str(rec) + "\n")
+output_file.write("F1 Measure :\t" + str(f1) + "\n")
+
+print("\nWith neutrals as rejected:")
+print("--------------------------\n")
 output_file.write("\nWith neutrals as rejected:\n")
 output_file.write("--------------------------\n\n")
 
-print "Accuracy :\t\t", (tp + tn + n_rej_tn)/(tp + tn + n_rej_tn + fp + fn + n_rej_fn)
-print "Precision :\t\t", tp/(tp + fp)
-print "Recall :\t\t", tp/(tp + fn + n_rej_fn)
-print "F1 Measure :\t", (2. * tp)/((2. * tp) + fp + fn + n_rej_fn)
+acc = round((tp + tn + n_rej_tn) / max(0.1, (tp + tn + n_rej_tn + fp + fn + n_rej_fn)), 3)
+prec = round(tp / max(0.1, (tp + fp)), 3)
+rec = round(tp / max((tp + fn + n_rej_fn)), 3)
+f1 = round((2. * tp) / max(((2. * tp) + fp + fn + n_rej_fn)), 3)
 
-output_file.write("Accuracy :\t\t" + str((tp + tn + n_rej_tn)/(tp + tn + n_rej_tn + fp + fn + n_rej_fn)) + "\n")
-output_file.write("Precision :\t\t" + str(tp/(tp + fp)) + "\n")
-output_file.write("Recall :\t\t" + str(tp/(tp + fn + n_rej_fn)) + "\n")
-output_file.write("F1 Measure :\t\t" + str((2. * tp)/((2. * tp) + fp + fn + n_rej_fn)) + "\n")
+print("Accuracy :\t" + str(acc) + "\n")
+print("Precision :\t" + str(prec) + "\n")
+print("Recall :\t" + str(rec) + "\n")
+print("F1 Measure :\t" + str(f1) + "\n")
+
+output_file.write("Accuracy :\t" + str(acc) + "\n")
+output_file.write("Precision :\t" + str(prec) + "\n")
+output_file.write("Recall :\t" + str(rec) + "\n")
+output_file.write("F1 Measure :\t" + str(f1) + "\n")
 
 output_file.close()

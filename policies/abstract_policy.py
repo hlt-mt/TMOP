@@ -31,12 +31,11 @@ authors and should not be interpreted as representing official policies, either 
 or implied, of the copyright holder.
 """
 
-class AbstractPolicy:
+class AbstractPolicy(ABC):
 	"""
 	Basic Interface of a decision policy.
 	This is an Abstract Base Class.
 	"""
-	__metaclass__ = ABCMeta
 
 	@abstractmethod
 	def __init__(self):

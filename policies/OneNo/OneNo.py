@@ -4,7 +4,7 @@ from abstract_policy import *
 
 class OneNo(AbstractPolicy):
 	def __init__(self):
-		print "OneNo ready"
+		print("OneNo ready")
 		return
 
 	def decide(self, result_list):

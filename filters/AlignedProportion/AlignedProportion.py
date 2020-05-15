@@ -69,7 +69,7 @@ class AlignedProportion(AbstractFilter):
 
 			f.close()
 			if self.model_exist:
-				print "Loaded stats from the model file."
+				print("Loaded stats from the model file.")
 
 		if extra_args['emit scores'] == True:
 			self.num_of_scans = 1
@@ -89,9 +89,9 @@ class AlignedProportion(AbstractFilter):
 		self.trg_var = (self.trg_sum_sq - (self.trg_sum * self.trg_sum) / self.n) / (self.n - 1)
 		self.trg_var = math.sqrt(self.trg_var)
 
-		print "Aligned Proportion:"
-		print "source mean & deviation:", self.src_mean, "\t", self.src_var
-		print "target mean & deviation:", self.trg_mean, "\t", self.trg_var
+		print("Aligned Proportion:")
+		print("source mean & deviation: {}\t{}".format(self.src_mean, self.src_var))
+		print("target mean & deviation: {}\t{}".format(self.trg_mean, self.trg_var))
 
 		f = open(self.model_filename, 'a')
 		lang_pair = self.src_language + self.trg_language

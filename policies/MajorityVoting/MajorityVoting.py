@@ -4,7 +4,7 @@ from abstract_policy import *
 
 class MajorityVoting(AbstractPolicy):
 	def __init__(self):
-		print "Majority Voting ready"
+		print("Majority Voting ready")
 		return
 
 	def decide(self, result_list):

@@ -68,7 +68,7 @@ class FirstUnalignedWord(AbstractFilter):
 
 			f.close()
 			if self.model_exist:
-				print "Loaded stats from the model file."
+				print("Loaded stats from the model file.")
 
 		if extra_args['emit scores'] == True:
 			self.num_of_scans = 1
@@ -183,6 +183,5 @@ class FirstUnalignedWord(AbstractFilter):
 		first_trg = abs(first_trg - self.trg_mean)
 
 		if first_src > self.var_mult * self.src_var or first_trg > self.var_mult * self.trg_var:
-		# if first_src > self.s_thresh or first_trg > self.t_thresh:
 			return 'reject'
 		return 'accept'

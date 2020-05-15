@@ -41,7 +41,7 @@ class WE_Average(AbstractFilter):
 
 	#
 	def initialize(self, source_language, target_language, extra_args):
-		self.num_of_scans = 3
+		self.num_of_scans = 1
 		self.src_language = extra_args['source language']
 		self.trg_language = extra_args['target language']
 		self.normalize = extra_args['normalize scores']
@@ -54,7 +54,6 @@ class WE_Average(AbstractFilter):
 
 		if os.path.isfile(self.model_file_name):
 			print "Loading from file ..."
-			self.num_of_scans = 1
 
 			lsi = lsimodel.LsiModel.load(self.model_file_name)
 			self.vectors = lsi.projection.u

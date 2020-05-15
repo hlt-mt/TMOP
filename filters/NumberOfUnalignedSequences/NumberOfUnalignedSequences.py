@@ -68,7 +68,7 @@ class NumberOfUnalignedSequences(AbstractFilter):
 
 			f.close()
 			if self.model_exist:
-				print "Loaded stats from the model file."
+				print("Loaded stats from the model file.")
 
 		if extra_args['emit scores'] == True:
 			self.num_of_scans = 1
@@ -97,9 +97,9 @@ class NumberOfUnalignedSequences(AbstractFilter):
 
 		f.close()
 
-		print "Number Of Unaligned Sequences:"
-		print "source mean & deviation:", self.src_mean, "\t", self.src_var
-		print "target mean & deviation:", self.trg_mean, "\t", self.trg_var
+		print("Number Of Unaligned Sequences:")
+		print("source mean & deviation: {}\t{}".format(self.src_mean, self.src_var))
+		print("target mean & deviation: {}\t{}".format(self.trg_mean, self.trg_var))
 
 		self.s_thresh = np.percentile(self.src_scores, self.var_mult)
 		self.t_thresh = np.percentile(self.trg_scores, self.var_mult)

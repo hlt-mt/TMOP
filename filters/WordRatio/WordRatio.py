@@ -56,7 +56,7 @@ class WordRatio(AbstractFilter):
 
 			f.close()
 			if self.model_exist:
-				print "Loaded stats from the model file."
+				print("Loaded stats from the model file.")
 
 		if extra_args['emit scores'] == True:
 			self.num_of_scans = 1
