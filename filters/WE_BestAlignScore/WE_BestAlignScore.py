@@ -60,7 +60,7 @@ class WE_BestAlignScore(AbstractFilter):
 			self.vectors = lsi.projection.u
 
 			self.all_words = {}
-			f = open(self.dict_file_name, "rb")
+			f = open(self.dict_file_name, "a")
 
 			for l in f:
 				l = l.strip().split("\t")

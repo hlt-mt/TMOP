@@ -60,7 +60,7 @@ class WE_Average(AbstractFilter):
 			self.vectors = lsi.projection.u
 
 			self.all_words = {}
-			f = open(self.dict_file_name, "rb")
+			f = open(self.dict_file_name, "a")
 
 			for l in f:
 				l = l.strip().split("\t")
@@ -178,10 +178,10 @@ class WE_Average(AbstractFilter):
 			print("number of TUs:", self.number_of_tus)
 			self.number_of_tus = 0
 
-			f = open(self.dict_file_name, "wb")
+			f = open(self.dict_file_name, "a")
 
 			for w in self.all_words:
-				f.write(w.encode("utf-8"))
+				f.write(w)
 				f.write("\t" + str(self.all_words[w]) + "\n")
 			f.close()
 
