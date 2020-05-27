@@ -52,7 +52,7 @@ class WE_BestAlignScore(AbstractFilter):
 		self.dict_file_name += self.src_language + self.trg_language
 
 		if os.path.isfile(self.model_file_name):
-			print "Loading from file ..."
+			print("Loading from file ...")
 			# Don't need to train vectors
 			self.num_of_scans = 1
 
@@ -96,10 +96,10 @@ class WE_BestAlignScore(AbstractFilter):
 
 	def finalize(self):
 		if self.model_exist:
-			print "Loaded stats from the model file."
+			print("Loaded stats from the model file.")
 			return
 		elif self.num_of_scans == 1:
-			print "Loaded the model from file."
+			print("Loaded the model from file.")
 
 		if self.n <= 1:
 			self.n = 2.0
@@ -187,31 +187,31 @@ class WE_BestAlignScore(AbstractFilter):
 
 			self.vectors = lil_matrix((len(self.all_words), self.number_of_tus), dtype=np.int8)
 
-			print "-#-#-#-#-#-#-#-#-#-#-#-"
-			print "size of vocab:", len(self.vocab)
-			print "size of common words:", len(self.all_words)
-			print "number of TUs:", self.number_of_tus
+			print("-#-#-#-#-#-#-#-#-#-#-#-")
+			print("size of vocab:", len(self.vocab))
+			print("size of common words:", len(self.all_words))
+			print("number of TUs:", self.number_of_tus)
 			self.number_of_tus = 0
 
-			f = open(self.dict_file_name, "wb")
+			f = open(self.dict_file_name, "a")
 
 			for w in self.all_words:
-				f.write(w.encode("utf-8"))
+				f.write(w)
 				f.write("\t" + str(self.all_words[w]) + "\n")
 			f.close()
 
 		# Second iteration of a normal run (making the tu-word matrix)
 		elif num_of_finished_scans == 2:
-			print "Performing SVD..."
+			print("Performing SVD...")
 
 			x = Sparse2Corpus(self.vectors)
 			lsi = lsimodel.LsiModel(corpus=x, id2word=None, num_topics=self.num_of_features)
 			lsi.save(self.model_file_name)
 			self.vectors = lsi.projection.u
 
-			print "done."
+			print("done.")
 		else:
-			print "-#-#-#-#-#-#-#-#-#-#-#-"
+			print("-#-#-#-#-#-#-#-#-#-#-#-")
 
 	#
 	def decide(self, tu):
