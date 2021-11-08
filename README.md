@@ -15,7 +15,7 @@ TMop has been developed at [Fondazione Bruno Kessler](https://hlt-mt.fbk.eu) wit
 
 # Citing
 
-If you use TMOP in your research, please cite [TMop: a Tool for Unsupervised Translation Memory Cleaning](https://aclanthology.coli.uni-saarland.de/papers/P16-4009/p16-4009).
+If you use TMOP in your research, please cite [TMop: a Tool for Unsupervised Translation Memory Cleaning](https://aclanthology.org/P16-4009/).
 ```
 @InProceedings{jalilisabet2016tmop,
   title = {TMop: a Tool for Unsupervised Translation Memory Cleaning},
