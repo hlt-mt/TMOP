@@ -53,11 +53,12 @@ def pass_by_value_decorator(old_f):
 	return new_f
 
 
-class AbstractFilter(ABC):
+class AbstractFilter():
 	"""
 	Basic Interface of a filter.
 	This is an Abstract Base Class.
 	"""
+	__metaclass__ = ABCMeta
 
 	# The number of scans required for the learning process.
 	# It should be defined in the initialize() function and changing the value after the initialization has no effect.
